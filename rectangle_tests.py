@@ -12,6 +12,17 @@ class RectangleTests(TestCase):
         self.assertEqual(rect.height, 2)
         self.assertEqual(rect.area, 4)
 
+    def test_calculate_area(self):
+        expected_height = 10
+        expected_width = 30
+        expected_area = expected_height * expected_width
+
+        height, width, area = Rectangle.calculate_area(Point(10, 10), Point(40, 20))
+
+        self.assertEqual(expected_height, height)
+        self.assertEqual(expected_width, width)
+        self.assertEqual(expected_area, area)
+
     def test_intersects_returns_false_when_rect_above(self):
         """
        ---------

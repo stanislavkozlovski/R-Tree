@@ -5,9 +5,19 @@ class Rectangle:
     def __init__(self, top_left: Point, bottom_right: Point):
         self.top_left = top_left
         self.bottom_right = bottom_right
-        self.height = top_left.height_from(bottom_right)
-        self.width = top_left.width_from(bottom_right)
-        self.area = self.height * self.width
+        self.height, self.width, self.area = self.calculate_area(top_left, bottom_right)
+
+    @staticmethod
+    def calculate_area(top_left_point: Point, bottom_right_point: Point) -> (int, int, int):
+        """
+        Calculates the height, width and area of a Rectangle,
+            given its top left and bottom right points
+        """
+        height = top_left_point.height_from(bottom_right_point)
+        width = top_left_point.width_from(bottom_right_point)
+        area = height * width
+
+        return height, width, area
 
     def is_intersecting(self, other_rect: 'Rectangle'):
         """
