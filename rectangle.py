@@ -1,19 +1,4 @@
-class Point:
-    def __init__(self, x, y):
-        self.x = x
-        self.y = y
-
-    def is_left_of(self, other_point: 'Point'):
-        return self.x < other_point.x
-
-    def is_right_of(self, other_point: 'Point'):
-        return self.x > other_point.x
-
-    def is_above(self, other_point: 'Point'):
-        return self.y > other_point.y
-
-    def is_below(self, other_point: 'Point'):
-        return self.y < other_point.y
+from point import Point
 
 
 class Rectangle:
