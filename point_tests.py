@@ -36,7 +36,7 @@ class PointTests(TestCase):
             self.point_a.move_below(point_b)
 
     def test_move_below_doesnt_raise_error_if_point_is_below_less_than_MOVE_DISTANCE(self):
-        point_b = Point(10, self.point_a.y - (Point.MOVE_DISTANCE - 0.1))
+        point_b = Point(10, self.point_a.y + (Point.MOVE_DISTANCE - 0.1))
         self.point_a.move_below(point_b)
 
     def test_move_below_moves_by_MOVE_DISTANCE(self):
