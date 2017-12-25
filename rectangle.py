@@ -5,6 +5,9 @@ class Rectangle:
     def __init__(self, top_left: Point, bottom_right: Point):
         self.top_left = top_left
         self.bottom_right = bottom_right
+        self.height = top_left.height_from(bottom_right)
+        self.width = top_left.width_from(bottom_right)
+        self.area = self.height * self.width
 
     def is_intersecting(self, other_rect: 'Rectangle'):
         """

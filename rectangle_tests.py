@@ -6,6 +6,12 @@ class RectangleTests(TestCase):
     def setUp(self):
         self.rect_a = Rectangle(top_left=Point(2,4), bottom_right=Point(4, 3))
 
+    def test_width_height_and_area_are_set(self):
+        rect = Rectangle(top_left=Point(2,4), bottom_right=Point(4, 6))
+        self.assertEqual(rect.width, 2)
+        self.assertEqual(rect.height, 2)
+        self.assertEqual(rect.area, 4)
+
     def test_intersects_returns_false_when_rect_above(self):
         """
        ---------
