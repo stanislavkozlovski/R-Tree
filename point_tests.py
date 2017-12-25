@@ -6,6 +6,14 @@ class PointTests(TestCase):
     def setUp(self):
         self.point_a = Point(10, 10)
 
+    def test_height_from_returns_absolute_difference(self):
+        height = self.point_a.height_from(Point(x=10, y=12))
+        self.assertEqual(height, 2)
+
+    def test_width_from_returns_absolute_difference(self):
+        width = self.point_a.width_from(Point(x=12, y=10))
+        self.assertEqual(width, 2)
+
     def test_move_above_raises_error_if_point_is_above_already(self):
         point_b = Point(10, 5)
         with self.assertRaises(Point.InvalidMoveError):

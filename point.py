@@ -9,6 +9,12 @@ class Point:
         self.x = x
         self.y = y
 
+    def width_from(self, other_point: 'Point'):
+        return abs(self.x - other_point.x)
+
+    def height_from(self, other_point: 'Point'):
+        return abs(self.y - other_point.y)
+
     def is_left_of(self, other_point: 'Point'):
         return self.x < other_point.x
 
