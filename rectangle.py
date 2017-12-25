@@ -34,3 +34,21 @@ class Rectangle:
             return False
 
         return True
+
+    def is_bounding(self, other_rect: 'Rectangle'):
+        """
+        :return: Boolean, indicating if this rectangle contains the other inside itself
+            NOTE: if Rectangle A == Rectangle B, A does not contain B and B does not contain A
+        """
+        return (self.top_left.is_above(other_rect.top_left)
+                and self.top_left.is_left_of(other_rect.top_left)
+                and self.bottom_right.is_below(other_rect.bottom_right)
+                and self.bottom_right.is_right_of(other_rect.bottom_right))
+
+    def is_bounded_by(self, other_rect: 'Rectangle'):
+        """
+        :return: Boolean, indicating if this rectangle is contained inside the other rectangle
+            NOTE: if Rectangle A == Rectangle B, A does not contain B and B does not contain A
+        """
+
+        return other_rect.is_bounding(self)
