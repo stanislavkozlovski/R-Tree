@@ -1,5 +1,6 @@
 from point import Point
 
+
 class Rectangle:
     def __init__(self, top_left: Point, bottom_right: Point):
         self.top_left = top_left
@@ -63,3 +64,36 @@ class Rectangle:
         """
 
         return other_rect.is_bounding(self)
+
+    def distance_between(self, other_rect: 'Rectangle') -> float:
+        """
+        Returns the minimum distance between two rectangle's closest points
+        """
+        is_left = self.bottom_right.is_left_of(other_rect.top_left)
+        is_above = self.bottom_right.is_above(other_rect.top_left)
+        is_below = self.top_left.is_below(other_rect.bottom_right)
+        is_right = self.top_left.is_right_of(other_rect.bottom_right)
+
+        if self.is_intersecting(other_rect):
+            return 0
+        if is_left and is_above:
+            closest_points = [self.bottom_right, other_rect.top_left]
+        elif is_left and is_below:
+            closest_points = [self.calculate_top_right(), other_rect.calculate_bottom_left()]
+        elif is_right and is_above:
+            closest_points = [self.calculate_bottom_left(), other_rect.calculate_top_right()]
+        elif is_right and is_below:
+            closest_points = [self.top_left, other_rect.bottom_right]
+        elif is_right:
+            closest_points = [self.calculate_bottom_left(), other_rect.bottom_right, self.top_left, other_rect.calculate_top_right()]
+        elif is_left:
+            closest_points = [self.bottom_right, other_rect.calculate_bottom_left(), self.calculate_top_right(), other_rect.top_left]
+        elif is_above:
+            closest_points = [self.calculate_bottom_left(), other_rect.top_left, self.bottom_right, other_rect.calculate_top_right()]
+        elif is_below:
+            closest_points = [self.top_left, other_rect.calculate_bottom_left(), self.calculate_top_right(), other_rect.bottom_right]
+        else:
+            raise NotImplementedError()
+
+        pairs = [(i, closest_points[idx+1]) for idx, i in enumerate(closest_points) if idx % 2 == 0]
+        return min(point_a.distance_to(point_b) for (point_a, point_b) in pairs)

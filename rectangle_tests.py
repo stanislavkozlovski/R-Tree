@@ -1,8 +1,9 @@
-from unittest import TestCase
+import unittest
+
 from rectangle import Point, Rectangle
 
 
-class RectangleTests(TestCase):
+class RectangleTests(unittest.TestCase):
     def setUp(self):
         self.rect_a = Rectangle(top_left=Point(2, 4), bottom_right=Point(4, 3))
 
@@ -126,3 +127,137 @@ class RectangleTests(TestCase):
 
         self.assertFalse(self.rect_b.is_bounded_by(self.rect_a))
         self.assertFalse(self.rect_a.is_bounded_by(self.rect_b))
+
+    def test_distance_between_intersecting_is_zero(self):
+        other_rect = Rectangle(top_left=Point(3, 3.5), bottom_right=Point(5, 2))
+        self.assertEqual(0, self.rect_a.distance_between(other_rect))
+
+    def test_distance_between_rectangle_that_is_strictly_above(self):
+        """
+     -------------
+     |   B        |
+     ------------
+        ---------
+        |         |
+        |   A     |
+        _________
+        """
+        other_rect = Rectangle(Point(1, 6), Point(4, 5))
+        expected_distance = self.rect_a.calculate_top_right().distance_to(other_rect.bottom_right)
+        self.assertEqual(expected_distance, self.rect_a.distance_between(other_rect))
+
+    def test_distance_between_rectangle_that_is_strictly_below(self):
+        """
+        ---------
+       |         |
+       |   A     |
+        _________
+        -------------
+        |   B        |
+        ------------
+        """
+        other_rect = Rectangle(Point(2, 2), Point(5, 1))
+        expected_distance = self.rect_a.calculate_bottom_left().distance_to(other_rect.top_left)
+        self.assertEqual(expected_distance, self.rect_a.distance_between(other_rect))
+
+    def test_distance_between_rectangle_that_is_strictly_left(self):
+        """
+       --------      ---------
+       |       |    |         |
+       |       |    |   A     |
+       |  B    |     _________
+       |       |
+       ____ ____
+        """
+        other_rect = Rectangle(top_left=Point(0.5, 4), bottom_right=Point(1.5, 3))
+        expected_distance = self.rect_a.top_left.distance_to(other_rect.calculate_top_right())
+        self.assertEqual(expected_distance, self.rect_a.distance_between(other_rect))
+
+    def test_distance_between_rectangle_that_is_strictly_right(self):
+        """
+            ---------      ---------
+           |         |    |         |
+           |   A     |    |    B    |
+            _________     |         |
+                          |         |
+                           ----------
+        """
+        other_rect = Rectangle(top_left=Point(6, 4), bottom_right=Point(10, 1))
+        expected_distance = self.rect_a.calculate_top_right().distance_to(other_rect.top_left)
+        self.assertEqual(expected_distance, self.rect_a.distance_between(other_rect))
+
+    def test_distance_between_rectangle_that_is_right_and_above(self):
+        """
+                            ---------
+                           |         |
+                           |    B    |
+                           |         |
+                           |         |
+                            ----------
+
+            ---------
+           |         |
+           |   A     |
+            _________
+        """
+        other_rect = Rectangle(top_left=Point(6, 6), bottom_right=Point(8, 5))
+        expected_distance = self.rect_a.calculate_top_right().distance_to(other_rect.calculate_bottom_left())
+        self.assertEqual(expected_distance, self.rect_a.distance_between(other_rect))
+
+    def test_distance_between_rectangle_that_is_left_and_above(self):
+        """
+       ---------
+      |         |
+      |    B    |
+      |         |
+      |         |
+       ----------
+
+                   ---------
+                  |         |
+                  |   A     |
+                   _________
+        """
+        other_rect = Rectangle(top_left=Point(0.5, 6), bottom_right=Point(1.5, 5))
+        expected_distance = self.rect_a.top_left.distance_to(other_rect.bottom_right)
+        self.assertEqual(expected_distance, self.rect_a.distance_between(other_rect))
+
+    def test_distance_between_rectangle_that_is_right_and_below(self):
+        """
+            ---------
+           |         |
+           |   A     |
+            _________
+
+                         ---------
+                        |         |
+                        |    B    |
+                        |         |
+                        |         |
+                         ----------
+        """
+        other_rect = Rectangle(top_left=Point(5, 2), bottom_right=Point(7, 1))
+        expected_distance = self.rect_a.bottom_right.distance_to(other_rect.top_left)
+        self.assertEqual(expected_distance, self.rect_a.distance_between(other_rect))
+
+    def test_distance_between_rectangle_that_is_left_and_below(self):
+        """
+                   ---------
+                  |         |
+                  |   A     |
+                   _________
+
+     ---------
+    |         |
+    |    B    |
+    |         |
+    |         |
+     ----------
+        """
+        self.rect_a = Rectangle(top_left=Point(2, 4), bottom_right=Point(4, 3))
+        other_rect = Rectangle(top_left=Point(1, 2), bottom_right=Point(1.5, 1))
+        expected_distance = self.rect_a.calculate_bottom_left().distance_to(other_rect.calculate_top_right())
+        self.assertEqual(expected_distance, self.rect_a.distance_between(other_rect))
+
+if __name__ == '__main__':
+    unittest.main()
