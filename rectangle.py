@@ -1,11 +1,24 @@
 from point import Point
 
-
 class Rectangle:
     def __init__(self, top_left: Point, bottom_right: Point):
         self.top_left = top_left
         self.bottom_right = bottom_right
         self.height, self.width, self.area = self.calculate_area(top_left, bottom_right)
+
+    def calculate_bottom_left(self) -> Point:
+        """
+        :return: This rectangle's Bottom Left Point
+            Note: This state is not kept in the class
+        """
+        return Point(x=self.top_left.x, y=self.bottom_right.y)
+
+    def calculate_top_right(self) -> Point:
+        """
+        :return: This rectangle's Top Right Point
+            Note: This state is not kept in the class
+        """
+        return Point(x=self.bottom_right.x, y=self.top_left.y)
 
     @staticmethod
     def calculate_area(top_left_point: Point, bottom_right_point: Point) -> (int, int, int):

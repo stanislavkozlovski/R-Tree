@@ -4,10 +4,10 @@ from rectangle import Point, Rectangle
 
 class RectangleTests(TestCase):
     def setUp(self):
-        self.rect_a = Rectangle(top_left=Point(2,4), bottom_right=Point(4, 3))
+        self.rect_a = Rectangle(top_left=Point(2, 4), bottom_right=Point(4, 3))
 
     def test_width_height_and_area_are_set(self):
-        rect = Rectangle(top_left=Point(2,4), bottom_right=Point(4, 6))
+        rect = Rectangle(top_left=Point(2, 4), bottom_right=Point(4, 6))
         self.assertEqual(rect.width, 2)
         self.assertEqual(rect.height, 2)
         self.assertEqual(rect.area, 4)
@@ -22,6 +22,14 @@ class RectangleTests(TestCase):
         self.assertEqual(expected_height, height)
         self.assertEqual(expected_width, width)
         self.assertEqual(expected_area, area)
+
+    def test_calculate_bottom_left_point(self):
+        expected_point = Point(2, 3)
+        self.assertEqual(expected_point, self.rect_a.calculate_bottom_left())
+
+    def test_calculate_top_right_point(self):
+        expected_point = Point(4, 4)
+        self.assertEqual(expected_point, self.rect_a.calculate_top_right())
 
     def test_intersects_returns_false_when_rect_above(self):
         """
