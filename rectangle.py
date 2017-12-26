@@ -33,6 +33,19 @@ class Rectangle:
 
         return height, width, area
 
+    @classmethod
+    def containing(cls, other_rect: 'Rectangle'):
+        """
+        Returns a new Rectangle object which can contain the given rectangle with MOVE_DISTANCE to spare
+        e.g Rectangle.containing(Rect(10, 10, 20, 20)) => Rect(11, 11, 21, 21)
+        """
+        from point_mover import move_left_of, move_above, move_right_of, move_below
+
+        top_left = move_above(move_left_of(Point(0, 0), other_rect.top_left), other_rect.top_left)
+        bottom_right = move_below(move_right_of(Point(0, 0), other_rect.bottom_right), other_rect.bottom_right)
+
+        return cls(top_left=top_left, bottom_right=bottom_right)
+
     def is_intersecting(self, other_rect: 'Rectangle'):
         """
         :return: Boolean, indicating if both rectangles intersect/overlap

@@ -262,10 +262,20 @@ class RectangleTests(unittest.TestCase):
     |         |
      ----------
         """
-        self.rect_a = Rectangle(top_left=Point(2, 4), bottom_right=Point(4, 3))
         other_rect = Rectangle(top_left=Point(1, 2), bottom_right=Point(1.5, 1))
         expected_distance = self.rect_a.calculate_bottom_left().distance_to(other_rect.calculate_top_right())
         self.assertEqual(expected_distance, self.rect_a.distance_between(other_rect))
+
+    def test_containing(self):
+        """
+        The class method containing() should return a
+            Rectangle object that can contain the passed rectangle
+        """
+        expected_tl = Point(self.rect_a.top_left.x - Point.MOVE_DISTANCE, self.rect_a.top_left.y + Point.MOVE_DISTANCE)
+        expected_br = Point(self.rect_a.bottom_right.x + Point.MOVE_DISTANCE, self.rect_a.bottom_right.y - Point.MOVE_DISTANCE)
+        expected_rectangle = Rectangle(top_left=expected_tl, bottom_right=expected_br)
+
+        self.assertEqual(expected_rectangle, Rectangle.containing(self.rect_a))
 
 if __name__ == '__main__':
     unittest.main()
