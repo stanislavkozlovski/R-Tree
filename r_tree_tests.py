@@ -6,7 +6,7 @@ from rectangle import Rectangle, Point
 
 class RTreeTests(unittest.TestCase):
     def test_add_without_root_should_add_root(self):
-        entry_bounds = Rectangle(Point(10, 10), Point(20, 20))
+        entry_bounds = Rectangle(Point(10, 10), Point(20, 0))
         entry = Entry(name='Tank', bounds=entry_bounds)
         r_tree = RTree(2, 4)
         r_tree.add(entry)
