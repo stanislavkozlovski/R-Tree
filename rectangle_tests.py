@@ -287,6 +287,71 @@ class RectangleTests(unittest.TestCase):
         self.assertEqual(expected_rectangle, Rectangle.containing(self.rect_a))
 
 
+class RectangleResizingTests(unittest.TestCase):
+    def setUp(self):
+        self.rect_dummy = Rectangle(Point(10, 10), Point(20, 5))
+
+    def test_expand_to_expands_rectangle(self):
+        rectangle = Rectangle(Point(11, 9), Point(15, 7))
+        rectangle.expand_to(self.rect_dummy)
+        self.assertTrue(rectangle.is_bounding(self.rect_dummy))
+
+    def test_expand_to_updates_area_width_height(self):
+        rectangle = Rectangle(Point(11, 9), Point(15, 7))
+        orig_w, orig_h, orig_a = rectangle.width, rectangle.height, rectangle.area
+
+        rectangle.expand_to(self.rect_dummy)
+
+        self.assertNotEqual(orig_a, rectangle.area)
+        self.assertNotEqual(orig_h, rectangle.height)
+        self.assertNotEqual(orig_w, rectangle.width)
+
+    def test_expanded_to_expands_rectangle_and_retains_bottom_right_point_if_it_already_covers(self):
+        expected_br = Point(21, 4)
+        rectangle = Rectangle(top_left=Point(11, 9), bottom_right=Point(21, 4))
+
+        rectangle.expand_to(self.rect_dummy)
+
+        self.assertTrue(rectangle.is_bounding(self.rect_dummy))
+        self.assertEqual(expected_br, rectangle.bottom_right)
+
+    def test_expanded_to_expands_rectangle_and_retains_top_left_point_if_it_already_covers(self):
+        expected_tl = Point(9, 11)
+        rectangle = Rectangle(top_left=Point(9, 11), bottom_right=Point(19, 9))
+
+        rectangle.expand_to(self.rect_dummy)
+
+        self.assertTrue(rectangle.is_bounding(self.rect_dummy))
+        self.assertEqual(expected_tl, rectangle.top_left)
+
+    def test_expanded_to_expands_only_x_axis_if_applicable(self):
+        """
+        We want it to keep as much of the original coordinates as possible
+        """
+        rectangle = Rectangle(top_left=Point(6, 11), bottom_right=Point(7, 4))
+
+        rectangle.expand_to(self.rect_dummy)
+
+        self.assertEqual(rectangle.top_left.y, 11)
+        self.assertEqual(rectangle.bottom_right.y, 4)
+
+    def test_expanded_to_expands_only_y_axis_if_applicable(self):
+        """
+        We want it to keep as much of the original coordinates as possible
+        """
+        rectangle = Rectangle(top_left=Point(9, 11), bottom_right=Point(21, 6))
+
+        rectangle.expand_to(self.rect_dummy)
+
+        self.assertEqual(rectangle.top_left.x, 9)
+        self.assertEqual(rectangle.bottom_right.x, 21)
+
+    def test_expanded_to_raises_error_if_rectangle_already_contains_other_rect(self):
+        rectangle = Rectangle(top_left=Point(9, 11), bottom_right=Point(21, 4))
+        with self.assertRaises(RectangleResizer.ResizeError):
+            rectangle.expand_to(self.rect_dummy)
+
+
 class RectangleResizerTests(unittest.TestCase):
     def setUp(self):
         self.rectangle = Rectangle(Point(10, 10), Point(20, 5))

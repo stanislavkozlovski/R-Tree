@@ -9,6 +9,7 @@ class Rectangle:
 
     def __init__(self, top_left: Point, bottom_right: Point):
         self._check_contraints(top_left, bottom_right)
+        self.resizer = RectangleResizer(self)
         self.top_left = top_left
         self.bottom_right = bottom_right
         self.height, self.width, self.area = self.calculate_area(top_left, bottom_right)
@@ -43,6 +44,12 @@ class Rectangle:
         area = height * width
 
         return height, width, area
+
+    def recalculate_area(self):
+        """
+        Recalculates this Rectangle's area, height and width
+        """
+        self.height, self.width, self.area = self.calculate_area(self.top_left, self.bottom_right)
 
     @classmethod
     def containing(cls, other_rect: 'Rectangle'):
@@ -89,6 +96,14 @@ class Rectangle:
 
         return other_rect.is_bounding(self)
 
+    def expand_to(self, other_rectangle: 'Rectangle'):
+        """
+        Expands the Rectangle to accommodate the given rectangle.
+        Raises an error if it already accommodates it
+        """
+        self.resizer.expand_to(other_rectangle)
+        self.recalculate_area()
+
     def distance_between(self, other_rect: 'Rectangle') -> float:
         """
         Returns the minimum distance between two rectangle's closest points
@@ -132,6 +147,18 @@ class RectangleResizer:
     """
     class ResizeError(Exception):
         pass
+
+    def __init__(self, rectangle: Rectangle):
+        self.rectangle = rectangle
+
+    def expand_to(self, other_rect: Rectangle):
+        """
+        Expands the Rectangle to accommodate the given rectangle.
+        Raises an error if it already accommodates it
+        """
+        if self.rectangle.is_bounding(other_rect):
+            raise self.ResizeError('Rectangle is big enough to contain rectangle_b')
+        self._expand_rectangle_points(self.rectangle.top_left, self.rectangle.bottom_right, other_rect)
 
     @classmethod
     def rectangle_expanded_to(cls, rectangle_a: Rectangle, rectangle_b: Rectangle) -> Rectangle:
