@@ -4,10 +4,19 @@ from point import Point
 
 
 class Rectangle:
+    class InvalidRectangleError(Exception):
+        pass
+
     def __init__(self, top_left: Point, bottom_right: Point):
+        self._check_contraints(top_left, bottom_right)
         self.top_left = top_left
         self.bottom_right = bottom_right
         self.height, self.width, self.area = self.calculate_area(top_left, bottom_right)
+
+    @classmethod
+    def _check_contraints(cls, top_left: Point, bottom_right: Point):
+        if not top_left.is_left_of(bottom_right) or not top_left.is_above(bottom_right):
+            raise cls.InvalidRectangleError("Rectangle is not valid!")
 
     def calculate_bottom_left(self) -> Point:
         """

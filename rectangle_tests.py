@@ -8,16 +8,24 @@ class RectangleTests(unittest.TestCase):
     def setUp(self):
         self.rect_a = Rectangle(top_left=Point(2, 4), bottom_right=Point(4, 3))
 
+    def test_raises_error_if_invalid_points_given(self):
+        with self.assertRaises(Rectangle.InvalidRectangleError):
+            # Bottom Right point cannot be above Top Left
+            Rectangle(top_left=Point(1, 1), bottom_right=Point(2, 2))
+        with self.assertRaises(Rectangle.InvalidRectangleError):
+            # Bottom Right point cannot be left of Top Left
+            Rectangle(top_left=Point(1, 1), bottom_right=Point(0, 0))
+
     def test_equals_return_true_when_points_are_same(self):
         rect_b = Rectangle(top_left=Point(2, 4), bottom_right=Point(4, 3))
         self.assertEqual(self.rect_a, rect_b)
 
     def test_equals_return_false_when_points_are_not_the_same(self):
-        rect_b = Rectangle(top_left=Point(2, 4), bottom_right=Point(4, 4))
+        rect_b = Rectangle(top_left=Point(2, 4), bottom_right=Point(4, 1))
         self.assertNotEqual(self.rect_a, rect_b)
 
     def test_width_height_and_area_are_set(self):
-        rect = Rectangle(top_left=Point(2, 4), bottom_right=Point(4, 6))
+        rect = Rectangle(top_left=Point(2, 4), bottom_right=Point(4, 2))
         self.assertEqual(rect.width, 2)
         self.assertEqual(rect.height, 2)
         self.assertEqual(rect.area, 4)
@@ -281,15 +289,15 @@ class RectangleTests(unittest.TestCase):
 
 class RectangleResizerTests(unittest.TestCase):
     def setUp(self):
-        self.rectangle = Rectangle(Point(10, 10), Point(20, 20))
+        self.rectangle = Rectangle(Point(10, 10), Point(20, 5))
 
     def test_expanded_to_expands_rectangle(self):
-        other_rect = Rectangle(Point(11, 11), Point(15, 15))
+        other_rect = Rectangle(Point(11, 9), Point(15, 7))
         new_rect = RectangleResizer.rectangle_expanded_to(other_rect, self.rectangle)
         self.assertTrue(new_rect.is_bounding(self.rectangle))
 
     def test_expanded_to_doesnt_modify_original_rectangles(self):
-        other_rect = Rectangle(Point(11, 11), Point(15, 15))
+        other_rect = Rectangle(Point(11, 9), Point(15, 7))
         orig_rect = deepcopy(self.rectangle)
         orig_other_rect = deepcopy(other_rect)
 
@@ -299,8 +307,8 @@ class RectangleResizerTests(unittest.TestCase):
         self.assertEqual(orig_other_rect, other_rect)
 
     def test_expanded_to_expands_rectangle_and_retains_bottom_right_point_if_it_already_covers(self):
-        expected_br = Point(21, 19)
-        other_rect = Rectangle(top_left=Point(11, 11), bottom_right=Point(21, 19))
+        expected_br = Point(21, 4)
+        other_rect = Rectangle(top_left=Point(11, 9), bottom_right=Point(21, 4))
 
         new_rect = RectangleResizer.rectangle_expanded_to(other_rect, self.rectangle)
 
@@ -309,7 +317,7 @@ class RectangleResizerTests(unittest.TestCase):
 
     def test_expanded_to_expands_rectangle_and_retains_top_left_point_if_it_already_covers(self):
         expected_tl = Point(9, 11)
-        other_rect = Rectangle(top_left=Point(9, 11), bottom_right=Point(19, 19))
+        other_rect = Rectangle(top_left=Point(9, 11), bottom_right=Point(19, 9))
 
         new_rect = RectangleResizer.rectangle_expanded_to(other_rect, self.rectangle)
 
@@ -320,26 +328,27 @@ class RectangleResizerTests(unittest.TestCase):
         """
         We want it to keep as much of the original coordinates as possible
         """
-        other_rect = Rectangle(top_left=Point(6, 11), bottom_right=Point(19, 19))
+        other_rect = Rectangle(top_left=Point(6, 11), bottom_right=Point(7, 4))
         new_rect = RectangleResizer.rectangle_expanded_to(other_rect, self.rectangle)
 
         self.assertEqual(new_rect.top_left.y, 11)
-        self.assertEqual(new_rect.bottom_right.y, 19)
+        self.assertEqual(new_rect.bottom_right.y, 4)
 
     def test_expanded_to_expands_only_y_axis_if_applicable(self):
         """
         We want it to keep as much of the original coordinates as possible
         """
-        other_rect = Rectangle(top_left=Point(9, 11), bottom_right=Point(21, 21))
+        other_rect = Rectangle(top_left=Point(9, 11), bottom_right=Point(21, 6))
         new_rect = RectangleResizer.rectangle_expanded_to(other_rect, self.rectangle)
 
         self.assertEqual(new_rect.top_left.x, 9)
         self.assertEqual(new_rect.bottom_right.x, 21)
 
     def test_expanded_to_raises_error_if_rectangle_already_contains_other_rect(self):
-        other_rect = Rectangle(top_left=Point(9, 11), bottom_right=Point(21, 19))
+        other_rect = Rectangle(top_left=Point(9, 11), bottom_right=Point(21, 4))
         with self.assertRaises(RectangleResizer.ResizeError):
             RectangleResizer.rectangle_expanded_to(other_rect, self.rectangle)
+
 
 if __name__ == '__main__':
     unittest.main()
