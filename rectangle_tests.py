@@ -1,6 +1,7 @@
 import unittest
+from copy import deepcopy
 
-from rectangle import Point, Rectangle
+from rectangle import Point, Rectangle, RectangleResizer
 
 
 class RectangleTests(unittest.TestCase):
@@ -276,6 +277,69 @@ class RectangleTests(unittest.TestCase):
         expected_rectangle = Rectangle(top_left=expected_tl, bottom_right=expected_br)
 
         self.assertEqual(expected_rectangle, Rectangle.containing(self.rect_a))
+
+
+class RectangleResizerTests(unittest.TestCase):
+    def setUp(self):
+        self.rectangle = Rectangle(Point(10, 10), Point(20, 20))
+
+    def test_expanded_to_expands_rectangle(self):
+        other_rect = Rectangle(Point(11, 11), Point(15, 15))
+        new_rect = RectangleResizer.rectangle_expanded_to(other_rect, self.rectangle)
+        self.assertTrue(new_rect.is_bounding(self.rectangle))
+
+    def test_expanded_to_doesnt_modify_original_rectangles(self):
+        other_rect = Rectangle(Point(11, 11), Point(15, 15))
+        orig_rect = deepcopy(self.rectangle)
+        orig_other_rect = deepcopy(other_rect)
+
+        new_rect = RectangleResizer.rectangle_expanded_to(other_rect, self.rectangle)
+
+        self.assertEqual(orig_rect, self.rectangle)
+        self.assertEqual(orig_other_rect, other_rect)
+
+    def test_expanded_to_expands_rectangle_and_retains_bottom_right_point_if_it_already_covers(self):
+        expected_br = Point(21, 19)
+        other_rect = Rectangle(top_left=Point(11, 11), bottom_right=Point(21, 19))
+
+        new_rect = RectangleResizer.rectangle_expanded_to(other_rect, self.rectangle)
+
+        self.assertTrue(new_rect.is_bounding(self.rectangle))
+        self.assertEqual(expected_br, new_rect.bottom_right)
+
+    def test_expanded_to_expands_rectangle_and_retains_top_left_point_if_it_already_covers(self):
+        expected_tl = Point(9, 11)
+        other_rect = Rectangle(top_left=Point(9, 11), bottom_right=Point(19, 19))
+
+        new_rect = RectangleResizer.rectangle_expanded_to(other_rect, self.rectangle)
+
+        self.assertTrue(new_rect.is_bounding(self.rectangle))
+        self.assertEqual(expected_tl, new_rect.top_left)
+
+    def test_expanded_to_expands_only_x_axis_if_applicable(self):
+        """
+        We want it to keep as much of the original coordinates as possible
+        """
+        other_rect = Rectangle(top_left=Point(6, 11), bottom_right=Point(19, 19))
+        new_rect = RectangleResizer.rectangle_expanded_to(other_rect, self.rectangle)
+
+        self.assertEqual(new_rect.top_left.y, 11)
+        self.assertEqual(new_rect.bottom_right.y, 19)
+
+    def test_expanded_to_expands_only_y_axis_if_applicable(self):
+        """
+        We want it to keep as much of the original coordinates as possible
+        """
+        other_rect = Rectangle(top_left=Point(9, 11), bottom_right=Point(21, 21))
+        new_rect = RectangleResizer.rectangle_expanded_to(other_rect, self.rectangle)
+
+        self.assertEqual(new_rect.top_left.x, 9)
+        self.assertEqual(new_rect.bottom_right.x, 21)
+
+    def test_expanded_to_raises_error_if_rectangle_already_contains_other_rect(self):
+        other_rect = Rectangle(top_left=Point(9, 11), bottom_right=Point(21, 19))
+        with self.assertRaises(RectangleResizer.ResizeError):
+            RectangleResizer.rectangle_expanded_to(other_rect, self.rectangle)
 
 if __name__ == '__main__':
     unittest.main()

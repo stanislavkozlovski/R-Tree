@@ -1,3 +1,5 @@
+from copy import deepcopy
+
 from point import Point
 
 
@@ -113,3 +115,40 @@ class Rectangle:
 
     def __eq__(self, other: 'Rectangle'):
         return self.bottom_right == other.bottom_right and self.top_left == other.top_left
+
+
+class RectangleResizer:
+    """
+    Adjustment-type class which deals with resizing rectangles
+    """
+    class ResizeError(Exception):
+        pass
+
+    @classmethod
+    def rectangle_expanded_to(cls, rectangle_a: Rectangle, rectangle_b: Rectangle) -> Rectangle:
+        """
+        Returns a new Rectangle object, derived from expanding rectangle_a to accommodate rectangle_b
+        """
+        if rectangle_a.is_bounding(rectangle_b):
+            raise cls.ResizeError('Rectangle is big enough to contain rectangle_b')
+
+        top_left: Point = deepcopy(rectangle_a.top_left)
+        bottom_right: Point = deepcopy(rectangle_a.bottom_right)
+
+        cls._expand_rectangle_points(top_left, bottom_right, rectangle_b)
+
+        return Rectangle(top_left, bottom_right)
+
+    @staticmethod
+    def _expand_rectangle_points(top_left: Point, bottom_right: Point, rectangle_b: Rectangle):
+        """
+        Given two points, expands them to contain rectangle_b
+        """
+        if not top_left.is_left_of(rectangle_b.top_left):
+            top_left.move_left_of(rectangle_b.top_left)
+        if not top_left.is_above(rectangle_b.top_left):
+            top_left.move_above(rectangle_b.top_left)
+        if not bottom_right.is_below(rectangle_b.bottom_right):
+            bottom_right.move_below(rectangle_b.bottom_right)
+        if not bottom_right.is_right_of(rectangle_b.bottom_right):
+            bottom_right.move_right_of(rectangle_b.bottom_right)
