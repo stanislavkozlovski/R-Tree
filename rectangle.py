@@ -97,3 +97,6 @@ class Rectangle:
 
         pairs = [(i, closest_points[idx+1]) for idx, i in enumerate(closest_points) if idx % 2 == 0]
         return min(point_a.distance_to(point_b) for (point_a, point_b) in pairs)
+
+    def __eq__(self, other: 'Rectangle'):
+        return self.bottom_right == other.bottom_right and self.top_left == other.top_left

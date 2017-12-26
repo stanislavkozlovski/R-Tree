@@ -7,6 +7,14 @@ class RectangleTests(unittest.TestCase):
     def setUp(self):
         self.rect_a = Rectangle(top_left=Point(2, 4), bottom_right=Point(4, 3))
 
+    def test_equals_return_true_when_points_are_same(self):
+        rect_b = Rectangle(top_left=Point(2, 4), bottom_right=Point(4, 3))
+        self.assertEqual(self.rect_a, rect_b)
+
+    def test_equals_return_false_when_points_are_not_the_same(self):
+        rect_b = Rectangle(top_left=Point(2, 4), bottom_right=Point(4, 4))
+        self.assertNotEqual(self.rect_a, rect_b)
+
     def test_width_height_and_area_are_set(self):
         rect = Rectangle(top_left=Point(2, 4), bottom_right=Point(4, 6))
         self.assertEqual(rect.width, 2)
