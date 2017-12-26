@@ -1,3 +1,6 @@
+from math import sqrt
+
+
 class Point:
     class InvalidMoveError(Exception):
         pass
@@ -62,6 +65,17 @@ class Point:
             raise self.InvalidMoveError("Point is already left of point!")
 
         self.x = other_point.x - self.MOVE_DISTANCE
+
+    def distance_to(self, other_point: 'Point') -> float:
+        """
+        Returns the Euclidian distance to another point
+        :param other_point:
+        :return:
+        """
+        dx = other_point.x - self.x
+        dy = other_point.y - self.y
+
+        return sqrt(dx * dx + dy * dy)
 
     def __eq__(self, other):
         return self.x == other.x and self.y == other.y

@@ -1,3 +1,5 @@
+import math
+
 from unittest import TestCase
 from point import Point
 
@@ -5,6 +7,13 @@ from point import Point
 class PointTests(TestCase):
     def setUp(self):
         self.point_a = Point(10, 10)
+
+    def test_distance_to(self):
+        other_point = Point(20, 20)
+        expected_distance = math.sqrt(200)
+
+        self.assertEqual(expected_distance, other_point.distance_to(self.point_a))
+        self.assertEqual(expected_distance, self.point_a.distance_to(other_point))
 
     def test_height_from_returns_absolute_difference(self):
         height = self.point_a.height_from(Point(x=10, y=12))
