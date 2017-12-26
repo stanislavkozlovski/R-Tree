@@ -4,6 +4,7 @@ Module that contains functions for creating new Point objects
 from point import Point
 
 
+# TODO: Move to Point class
 def move_left_of(point_a: Point, point_b: Point) -> Point:
     """
     Creates a new Point object, the same as point_a, moved MOVE_DISTANCE left of point_b
