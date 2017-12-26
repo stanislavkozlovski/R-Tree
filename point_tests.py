@@ -77,3 +77,9 @@ class PointTests(TestCase):
 
         self.point_a.move_right_of(point_b)
         self.assertEqual(self.point_a.x, expected_x)
+
+    def test_equals_returns_true_when_equal_coordinates(self):
+        self.assertEqual(Point(12, 10), Point(12, 10))
+
+    def test_equals_returns_false_when_different_coordinates(self):
+        self.assertNotEqual(Point(15, 10), Point(12, 10))

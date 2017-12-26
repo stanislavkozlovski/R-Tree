@@ -62,3 +62,6 @@ class Point:
             raise self.InvalidMoveError("Point is already left of point!")
 
         self.x = other_point.x - self.MOVE_DISTANCE
+
+    def __eq__(self, other):
+        return self.x == other.x and self.y == other.y
