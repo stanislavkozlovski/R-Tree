@@ -36,6 +36,5 @@ class RTree:
 
     def add(self, object: Entry):
         if self.root is None:
-            self.root: self.RTreeNode = self.RTreeNode(mbr=object.bounds)
-            return
+            self.root: self.RTreeNode = self.RTreeNode(mbr=Rectangle.containing(object.bounds))
         self.root.add(object)
