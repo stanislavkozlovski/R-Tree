@@ -20,8 +20,22 @@ class RTreeTests(unittest.TestCase):
         self.assertEqual(len(r_tree.root.entries), 1)
         self.assertEqual(r_tree.root.entries[0], entry)
 
+    def test_add_bigger_mbr_entry_expands_root(self):
+        r_tree = RTree(2, 4)
+        s_entry = Entry('SMALL_MAN', bounds=Rectangle(Point(52, 43), Point(68, 22)))
+        expected_root_mbr = Rectangle(Point(52 - POINT_OFFSET, 43 + POINT_OFFSET), Point(68 + POINT_OFFSET, 22 - POINT_OFFSET))
+        r_tree.add(s_entry)
+        self.assertEqual(r_tree.root.mbr, expected_root_mbr)
 
-class SplitLeafTests(unittest.TestCase):
+        # Add a bigger entry
+        expected_root_mbr = Rectangle(Point(20 - POINT_OFFSET, 45 + POINT_OFFSET), Point(70 + POINT_OFFSET, 20 - POINT_OFFSET))
+        b_entry = Entry('BIG_MAN', Rectangle(Point(20, 45), Point(70, 20)))
+        r_tree.add(b_entry)
+
+        self.assertEqual(r_tree.root.mbr, expected_root_mbr)
+        self.assertCountEqual(r_tree.root.entries, [b_entry, s_entry])
+
+
     """
     The split_leaf function should split a leaf full of entries into two separate nodes.
     It should pick the two furthest apart entries and make their MBRs into nodes.
@@ -87,9 +101,11 @@ class SplitLeafTests(unittest.TestCase):
         entry_c = Entry('C', bounds=Rectangle(Point(44, 40), Point(47, 25)))
         entry_d = Entry('D', bounds=Rectangle(Point(52, 43), Point(68, 22)))
         root.entries = [entry_a, entry_b, entry_c, entry_d]
-        
-        expected_node_a_mbr = Rectangle(Point(22-POINT_OFFSET, 40+POINT_OFFSET), Point(40+POINT_OFFSET, 25-POINT_OFFSET))
-        expected_node_b_mbr = Rectangle(Point(44-POINT_OFFSET, 43+POINT_OFFSET), Point(68+POINT_OFFSET, 22-POINT_OFFSET))
+
+        expected_node_a_mbr = Rectangle(Point(22 - POINT_OFFSET, 40 + POINT_OFFSET),
+                                        Point(40 + POINT_OFFSET, 25 - POINT_OFFSET))
+        expected_node_b_mbr = Rectangle(Point(44 - POINT_OFFSET, 43 + POINT_OFFSET),
+                                        Point(68 + POINT_OFFSET, 22 - POINT_OFFSET))
 
         node_a, node_b = root.split_leaf()
 
@@ -99,6 +115,7 @@ class SplitLeafTests(unittest.TestCase):
         self.assertCountEqual(node_b.entries, [entry_c, entry_d])
         self.assertEqual(node_a.children, [])
         self.assertEqual(node_b.children, [])
+
 
 if __name__ == '__main__':
     unittest.main()

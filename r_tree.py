@@ -32,12 +32,15 @@ class RTree:
         def add(self, object: Entry):
             if len(self.children) == 0:
                 # This node is a leaf, add the entry
+                self.entries.append(object)
+
+                if not self.mbr.is_bounding(object.mbr):
+                    self.mbr.expand_to(object.mbr)
+
                 if len(self.entries) == self.maximum_order:
                     # Need to split
                     node_a, node_b = self.split_leaf()
-                    # TODO: Expand parents' MBR and re-assign
-                self.entries.append(object)
-                # TODO: Handle full entries case
+                    self.children.extend([node_a, node_b])
                 return
             pass
 
