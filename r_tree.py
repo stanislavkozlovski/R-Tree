@@ -55,14 +55,15 @@ class RTree:
 
                     dist = entry.mbr.distance_between(other_entry.mbr)
                     if dist > max_distance:
+                        max_distance = dist
                         max_obj_a = entry
                         max_obj_b = other_entry
 
             # 2. Create two new nodes to accommodate the new objects
-            node_a = RTreeNode(min_order=self.minimum_order, max_order=self.maximum_order,
+            node_a = self.__class__(min_order=self.minimum_order, max_order=self.maximum_order,
                                mbr=Rectangle.containing(max_obj_a.mbr))
             node_a.add(max_obj_a)
-            node_b = RTreeNode(min_order=self.minimum_order, max_order=self.maximum_order,
+            node_b = self.__class__(min_order=self.minimum_order, max_order=self.maximum_order,
                                mbr=Rectangle.containing(max_obj_b.mbr))
             node_b.add(max_obj_b)
 
