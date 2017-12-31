@@ -12,6 +12,9 @@ class Entry:
     def __eq__(self, other):
         return self.name == other.name and self.mbr == other.mbr
 
+    def __hash__(self):
+        return hash(f'{self.name}{hash(self.mbr)}')
+
 
 class RTree:
 

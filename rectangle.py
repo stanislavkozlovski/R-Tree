@@ -140,6 +140,9 @@ class Rectangle:
     def __eq__(self, other: 'Rectangle'):
         return self.bottom_right == other.bottom_right and self.top_left == other.top_left
 
+    def __hash__(self):
+        return hash(f'{hash(self.bottom_right)}{hash(self.top_left)}')
+
 
 class RectangleResizer:
     """
