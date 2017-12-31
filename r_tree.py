@@ -87,19 +87,8 @@ class RTree:
                 else:
                     # Put it in the one whose MBR requires least expansion
                     # TODO: Handle case where both bound entry
-                    if node_a.mbr.is_bounding(entry.mbr):
-                        node_a.add(entry)
-                    elif node_b.mbr.is_bounding(entry.mbr):
-                        node_b.add(entry)
-                    else:
-                        orig_a_area = node_a.mbr.area
-                        orig_b_area = node_b.mbr.area
-                        expanded_a_area = RectangleResizer.rectangle_expanded_to(node_a.mbr, entry.mbr).area
-                        expanded_b_area = RectangleResizer.rectangle_expanded_to(node_b.mbr, entry.mbr).area
-                        if expanded_a_area >= expanded_b_area:
-                            node_b.add(entry)
-                        else:
-                            node_a.add(entry)
+                    node: 'RTreeNode' = self.find_min_expansion_node([node_a, node_b], entry)
+                    node.add(entry)
 
             # 4. Expand node's MBR to fir their biggest
             for node in [node_a, node_b]:
