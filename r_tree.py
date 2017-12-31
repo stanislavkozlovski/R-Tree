@@ -7,7 +7,7 @@ class Entry:
     """
     def __init__(self, name: str, bounds: Rectangle):
         self.name = name
-        self.mbr = bounds
+        self.mbr: Rectangle = bounds
 
     def __eq__(self, other):
         return self.name == other.name and self.mbr == other.mbr
@@ -27,7 +27,7 @@ class RTree:
             self.minimum_order = min_order
             self.maximum_order = max_order
             self.children = []
-            self.entries = []
+            self.entries: [Entry] = []
 
         def add(self, object: Entry):
             if len(self.children) == 0:
@@ -44,6 +44,7 @@ class RTree:
         def split_leaf(self):
             """
             Splits the given RTreeNode into 2 separate Nodes
+            Then moves its entries into one of the two nodes
             """
             if len(self.children) > 0:
                 raise NotImplementedError('[DEBUG] Unexpected behavior')
@@ -64,10 +65,10 @@ class RTree:
 
             # 2. Create two new nodes to accommodate the new objects
             node_a = self.__class__(min_order=self.minimum_order, max_order=self.maximum_order,
-                               mbr=Rectangle.containing(max_obj_a.mbr))
+                                    mbr=Rectangle.containing(max_obj_a.mbr))
             node_a.add(max_obj_a)
             node_b = self.__class__(min_order=self.minimum_order, max_order=self.maximum_order,
-                               mbr=Rectangle.containing(max_obj_b.mbr))
+                                    mbr=Rectangle.containing(max_obj_b.mbr))
             node_b.add(max_obj_b)
 
             # 3. Move rest of entries to appropriate nodes
@@ -96,6 +97,13 @@ class RTree:
                             node_b.add(entry)
                         else:
                             node_a.add(entry)
+
+            # 4. Expand node's MBR to fir their biggest
+            for node in [node_a, node_b]:
+                for entry in node.entries:
+                    entry: Entry
+                    if not node.mbr.is_bounding(entry.mbr):
+                        node.mbr.expand_to(entry.mbr)
 
             return node_a, node_b
 
