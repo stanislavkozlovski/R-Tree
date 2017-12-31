@@ -116,6 +116,81 @@ class RTreeTests(unittest.TestCase):
         self.assertEqual(node_a.children, [])
         self.assertEqual(node_b.children, [])
 
+    def test_find_min_expansion_node(self):
+        """
+        Given 3 nodes and one Entry, find the node which requires the minimum expansion to accommodate the Entry
+        """
+        """
+        Node C should be chosen
+        -----------------------------------------------------------------------------------------------------
+        |                                                      |------------------------------------------| |
+        |                                                      |                                          | |
+        |                                         ______       |                                          | |
+        |     ______________                      |     |      |                                          | |
+        |    |             |                      |     | ---  |                                          | |
+        |    |     A       |                      |     | |  | |                                          | |
+        |    |             |                      |     | |E | |                                          | |
+        |    |     ________|________              |     | |  | |                                          | |
+        |    |     |       |       |              |  C  |  --  |                  D                       | |
+        |    |     |       |       |              |     |      |                                          | |
+        |    |     |       |       |              |     |      |                                          | |
+        |    |     |       |B      |              |     |      |                                          | |
+        |    --------------        |              |     |      |                                          | |
+        |          |               |              |     |      |                                          | |
+        |          |               |              |     |      |                                          | |
+        |          -----------------              |     |      |                                          | |
+        |                                         -------      |                                          | |
+        |                                                      |                                          | |
+        |                                                      |__________________________________________| |
+        |                                                                                                   |
+        _____________________________________________________________________________________________________
+
+        """
+        rtn_a = RTreeNode(2, 4, mbr=Rectangle(Point(22, 40), Point(30, 30)))
+        rtn_b = RTreeNode(2, 4, mbr=Rectangle(Point(25, 35), Point(40, 25)))
+        rtn_c = RTreeNode(2, 4, mbr=Rectangle(Point(44, 40), Point(47, 25)))
+        rtn_d = RTreeNode(2, 4, mbr=Rectangle(Point(52, 43), Point(68, 22)))
+        entry_e = Entry('E', bounds=Rectangle(Point(47, 35), Point(51, 30)))
+
+        min_expansion_node = RTreeNode.find_min_expansion_node([rtn_a, rtn_b, rtn_c, rtn_d], entry_e)
+        self.assertEqual(rtn_c, min_expansion_node)
+
+    def test_find_min_expansion_node_chooses_node_that_contains_it_already(self):
+        """
+        Should choose D
+        -----------------------------------------------------------------------------------------------------
+        |                                                      |------------------------------------------| |
+        |                                                      |                                          | |
+        |                                         ______       |                                          | |
+        |     ______________                      |     |      |              ------                      | |
+        |    |             |                      |     |      |             |  E  |                      | |
+        |    |     A       |                      |     |      |             ------                       | |
+        |    |             |                      |     |      |                                          | |
+        |    |     ________|________              |     |      |                                          | |
+        |    |     |       |       |              |  C  |      |                  D                       | |
+        |    |     |       |       |              |     |      |                                          | |
+        |    |     |       |       |              |     |      |                                          | |
+        |    |     |       |B      |              |     |      |                                          | |
+        |    --------------        |              |     |      |                                          | |
+        |          |               |              |     |      |                                          | |
+        |          |               |              |     |      |                                          | |
+        |          -----------------              |     |      |                                          | |
+        |                                         -------      |                                          | |
+        |                                                      |                                          | |
+        |                                                      |__________________________________________| |
+        |                                                                                                   |
+        _____________________________________________________________________________________________________
+
+        """
+        rtn_a = RTreeNode(2, 4, mbr=Rectangle(Point(22, 40), Point(30, 30)))
+        rtn_b = RTreeNode(2, 4, mbr=Rectangle(Point(25, 35), Point(40, 25)))
+        rtn_c = RTreeNode(2, 4, mbr=Rectangle(Point(44, 40), Point(47, 25)))
+        rtn_d = RTreeNode(2, 4, mbr=Rectangle(Point(52, 43), Point(68, 22)))
+        entry_e = Entry('E', bounds=Rectangle(Point(55, 35), Point(60, 30)))
+
+        min_expansion_node = RTreeNode.find_min_expansion_node([rtn_a, rtn_b, rtn_c, rtn_d], entry_e)
+        self.assertEqual(min_expansion_node, rtn_d)
+
 
 if __name__ == '__main__':
     unittest.main()

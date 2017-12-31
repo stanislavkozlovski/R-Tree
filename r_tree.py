@@ -110,6 +110,22 @@ class RTree:
 
             return node_a, node_b
 
+        @staticmethod
+        def find_min_expansion_node(rt_nodes: ['RTreeNode'], entry: Entry) -> 'RTreeNode':
+            """
+            Given N RTreeNodes and one Entry,
+                find the RTreeNode which requires the least expansion to accommodate the Entry
+            """
+            expansions = []
+            for node in rt_nodes:
+                if node.mbr.is_bounding(entry.mbr):
+                    expanded = 0
+                else:
+                    expanded = RectangleResizer.rectangle_expanded_to(node.mbr, entry.mbr).area - node.mbr.area
+                expansions.append({'node': node, 'expanded': expanded})
+
+            return min(expansions, key=lambda x: x['expanded'])['node']
+
     def __init__(self, min_order: int, max_order: int):
         self.root: self.RTreeNode = None
         self.minimum_order = min_order
